@@ -42,7 +42,7 @@ public class ProductsActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_products);
 
-		//TODO Create database manager
+		dbManager = new DatabaseManager(this);
 
 		productNameET = (EditText)findViewById(R.id.add_new_product_name_et);
 		productQuantityET = (EditText)findViewById(R.id.add_new_product_quantity_et);
@@ -53,8 +53,14 @@ public class ProductsActivity extends AppCompatActivity {
 		searchProductsButton = (Button)findViewById(R.id.search_products_button);
 		updateQuantityButton = (Button)findViewById(R.id.update_quantity_button);
 
-		// TODO Set up Cursor, create ProductListAdapter using this Cursor,
-		// TODO configure ListView to use this ProductListAdapter,
+		/*
+		Sets up cursor, create ProductListAdpater using this cursor,
+		configure ListView to use this ProductListAdapter.
+		 */
+		allProductsListView = (ListView) findViewById(R.id.all_products_listview);
+		allProductsCursor = dbManager.getCursorAll();
+		allProductListAdapter = new ProductListAdapter(this, allProductsCursor, false);
+		allProductsListView.setAdapter(allProductListAdapter);
 
 		addProductButton.setOnClickListener(new View.OnClickListener() {
 
@@ -72,7 +78,23 @@ public class ProductsActivity extends AppCompatActivity {
 
 				int quantity = Integer.parseInt(newQuantity);
 
-				// TODO Request DB mananger add this product
+				if (dbManager.addProduct(newName,quantity)) {
+
+					Toast.makeText(ProductsActivity.this, "Product added to database", Toast.LENGTH_LONG).show();
+
+					// Clear form and update ListView.
+					productNameET.getText().clear();
+					productQuantityET.getText().clear();
+					allProductListAdapter.changeCursor(dbManager.getCursorAll());
+
+				} else {
+
+					// Probably a duplicate product.
+					Toast.makeText(ProductsActivity.this, newName + " is already in the database",
+							Toast.LENGTH_LONG).show();
+
+				}
+
 			}
 		});
 

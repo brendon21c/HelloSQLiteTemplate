@@ -83,6 +83,29 @@ public class DatabaseManager {
 		return cursor;
 	}
 
+	/*
+	Add a product to the table, returns true if added, false if already in database.
+	 */
+	public boolean addProduct(String name, int quantity) {
+
+		ContentValues newProduct = new ContentValues();
+		newProduct.put(NAME_COL, name);
+		newProduct.put(QUANTITY_COL, quantity);
+
+		try {
+			db.insertOrThrow(DB_TABLE, null, newProduct);
+			return true;
+
+		} catch (SQLiteConstraintException SQLCE) {
+
+			Log.e(DB_TAG, "error inserting into table" + "Name: " + name +
+					" Quantity: " + quantity, SQLCE);
+			return false;
+
+		}
+
+	}
+
 
 }
 
