@@ -21,7 +21,7 @@ public class DatabaseManager {
 	protected static final int DB_VERSION = 1;
 	protected static final String DB_TABLE = "inventory";
 
-	private static final String INT_COL = "_id";
+	private static final String INT_COL = "_id"; // Primary Key
 	protected static final String NAME_COL = "product_name";
 	protected static final String QUANTITY_COL = "quantity";
 
@@ -39,11 +39,6 @@ public class DatabaseManager {
 	}
 
 
-	//TODO add method to fetch all data and return a Cursor
-	//TODO add method to select (search) for a product by name
-	//TODO add method to insert (add) a product and quantity
-	//TODO add method to delete a product
-	//TODO add method to update (change) the quantity of a product
 
 
 	public class SQLHelper extends SQLiteOpenHelper {
@@ -60,7 +55,9 @@ public class DatabaseManager {
 			//Name column, String
 			//Quantity column, int
 
-			String createTable = "CREATE TABLE " + DB_TABLE + " (" + INT_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  NAME_COL +" TEXT UNIQUE, " + QUANTITY_COL +" INTEGER);"  ;
+			String createTable = "CREATE TABLE " + DB_TABLE + " (" + INT_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+					NAME_COL +" TEXT UNIQUE, " + QUANTITY_COL +" INTEGER);"  ;
+
 			Log.d(SQL_TAG, createTable);
 			db.execSQL(createTable);
 		}

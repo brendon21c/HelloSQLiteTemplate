@@ -70,7 +70,7 @@ public class ProductsActivity extends AppCompatActivity {
 				String newName = productNameET.getText().toString();
 				String newQuantity = productQuantityET.getText().toString();
 
-				if ( newName.length() == 0  || !newQuantity.matches("^\\d+$")) {   //regex validation
+				if ( newName.length() == 0  || !newQuantity.matches("^\\d+$")) {   //regex validation:  ^ (start), $ (finish), \\d+ (check for any strings)
 					Toast.makeText(ProductsActivity.this, "Please enter a product name and numerical quantity",
 							Toast.LENGTH_LONG).show();
 					return;
@@ -137,10 +137,16 @@ public class ProductsActivity extends AppCompatActivity {
 				String productName = searchNameET.getText().toString();
 
 
+
+
 				if (dbManager.updateQuantity(productName,newQuantity)) {
 
 					Toast.makeText(ProductsActivity.this, "Quantity updated", Toast.LENGTH_LONG).show();
 					allProductListAdapter.changeCursor(dbManager.getCursorAll());
+
+					// These just clear the fields.
+					updateProductQuantityET.setText("");
+					searchNameET.setText("");
 
 				} else {
 
@@ -160,7 +166,6 @@ public class ProductsActivity extends AppCompatActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
 
-				//TODO Show confirmation dialog. If user clicks OK, then delete item
 
 				// We can delete by id, no problem, so could simply call dbManager.deleteProduct(id)
 				// In this case, we'd like to show a confirmation dialog
