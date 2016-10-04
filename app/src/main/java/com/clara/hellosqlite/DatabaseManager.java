@@ -107,6 +107,76 @@ public class DatabaseManager {
 	}
 
 
+	public int getQuantityForProduct(String productName) {
+
+		String[] cols = { QUANTITY_COL };
+
+		/*
+		Querry is Case Sensistive, if thats a problem convert to uppercase and run via:
+		select quantity from products where upper(product_name) = upper(productName>)
+		 */
+
+		String selection = NAME_COL + " = ? ";
+		String[] selectionArgs = { productName };
+
+		Cursor cursor = db.query(DB_TABLE, cols, selection, selectionArgs, null, null, null );
+
+		if (cursor.getCount() == 1) {
+
+			cursor.moveToFirst();
+
+			int quantity = cursor.getInt(0);
+			cursor.close();
+			return quantity;
+
+		} else {
+
+			/*
+			0 products were found or more than one which would be a problem with the database.
+			When it was created product_name was configured to be unique.
+			 */
+			return -1;
+
+		}
+
+	}
+
+	public boolean updateQuantity(String name, int quantity) {
+
+		ContentValues updateProduct = new ContentValues();
+		updateProduct.put(QUANTITY_COL, quantity);
+
+		String[] whereArgs = { name };
+		String where = NAME_COL + " = ? ";
+
+		int rowsChanged = db.update(DB_TABLE, updateProduct, where, whereArgs);
+
+		Log.i(DB_TAG, "Update " + name + " new quantity " + quantity + " rows modified " + rowsChanged);
+
+		if (rowsChanged > 0 ) {
+
+			return true;
+
+		}
+
+		return false;
+	}
+
+	public boolean deleteProduct(long productID) {
+
+		String[] args = { Long.toString(productID) };
+		String where = "_id = ? ";
+		int rowsDeleted = db.delete(DB_TABLE, where, args);
+
+		if (rowsDeleted == 1) {
+
+			return true;
+		}
+
+		return false;
+
+	}
+
 }
 
 

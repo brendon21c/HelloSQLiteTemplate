@@ -111,7 +111,20 @@ public class ProductsActivity extends AppCompatActivity {
 					return;
 				}
 
-				//TODO request quantity of product from dbMananger
+				int quantity = dbManager.getQuantityForProduct(searchName);
+
+				if (quantity == -1) {
+
+					Toast.makeText(ProductsActivity.this, "Product " + searchName + " not found.",
+							Toast.LENGTH_LONG).show();
+
+
+				} else {
+
+					updateProductQuantityET.setText(Integer.toString(quantity));
+
+				}
+
 			}
 		});
 
@@ -119,13 +132,22 @@ public class ProductsActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 
-				//TODO: Ensure a product is selected and new quantity provided
 
 				int newQuantity = Integer.parseInt(updateProductQuantityET.getText().toString());
 				String productName = searchNameET.getText().toString();
 
-				// TODO dbMananger update product quantity
-				// TODO If update successful, show Toast and update ListView's Adapter's Cursor
+
+				if (dbManager.updateQuantity(productName,newQuantity)) {
+
+					Toast.makeText(ProductsActivity.this, "Quantity updated", Toast.LENGTH_LONG).show();
+					allProductListAdapter.changeCursor(dbManager.getCursorAll());
+
+				} else {
+
+					Toast.makeText(ProductsActivity.this, "Product not in database", Toast.LENGTH_LONG).show();
+
+				}
+
 			}
 		});
 
@@ -144,6 +166,25 @@ public class ProductsActivity extends AppCompatActivity {
 				// In this case, we'd like to show a confirmation dialog
 				// with the name of the product, so need to get some data about this list item
 				// Want the data? Need to call getItem to get the Cursor for this row
+
+				Cursor cursor = (Cursor) allProductListAdapter.getItem(position);
+				String name = cursor.getString(1);
+
+				new AlertDialog.Builder(ProductsActivity.this)
+						.setTitle("Delete")
+						.setMessage("Delete " + name + "? ")
+						.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+
+								dbManager.deleteProduct(id);
+								Toast.makeText(ProductsActivity.this, "Product deleted", Toast.LENGTH_LONG).show();
+								allProductListAdapter.changeCursor(dbManager.getCursorAll());
+
+							}
+						}).setNegativeButton(android.R.string.cancel, null)
+
+						.create().show();
 
 				return false;
 			}
